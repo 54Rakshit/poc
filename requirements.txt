@@ -3,6 +3,19 @@
 # Manually managing azure-functions-worker may cause unexpected issues
 
 azure-functions
+redis
+redisvl
+# requests
+azure-storage-blob
+# numpy
+# torch
+transformers
+sentence-transformers
 flask
+pymupdf
+langchain
+langchain-openai
+python-dotenv
+python-docx
 gunicorn
 werkzeug
