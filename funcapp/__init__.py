@@ -20,19 +20,14 @@ CHAT_HISTORY_BLOB = os.getenv("CHAT_HISTORY_BLOB")
 AZURE_OPENAI_ENDPOINT = os.getenv("AZURE_OPENAI_ENDPOINT")
 AZURE_OPENAI_API_KEY = os.getenv("AZURE_OPENAI_API_KEY")
 
-
-
-@app.route("/")
-def index():
-    return (
-        "Try /hello/Vijay for parameterized Flask route.\n"
-        "Try /module for module import guidance"
-    )
-
-@app.route("/hello/<name>", methods=['GET'])
-def hello(name: str):
-    return f"hello {name}"
-
+@app.route("/pretrain_llm", methods=['POST'])
+def pretrain_llm_endpoint():
+    blobs = [HR_POLICIES_BLOB, CHAT_HISTORY_BLOB]
+    train_llm(AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, blobs)
+    if train_llm:
+        return jsonify({"status": "LLM pretrained"})
+    else:
+        return jsonify({"status": "LLM not pretrained"})
 
 @app.route("/query", methods=['POST'])
 def query():
@@ -42,12 +37,28 @@ def query():
     response = get_from_cache(query)
     if not response:
         relevant_data = get_relevant_blob_data(AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, HR_POLICIES_BLOB, query)
-        print("pragya : inside main printing relevant_data")
+        print("inside main printing relevant_data")
         print(relevant_data[0:10])
         response = query_llm(query, relevant_data)
         # update_cache(query, response)
     return jsonify({"response": response})
 
+@app.route("/update_cache", methods=['POST'])
+def update_cache_endpoint():
+    updated_blobs = get_updated_blobs(AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, [CHAT_HISTORY_BLOB])
+    if updated_blobs:
+        for blob in updated_blobs:
+            data = get_all_blob_data(AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, [blob])
+            for item in data:
+                update_cache(item['query'], item['response'])
+    return jsonify({"status": "Cache updated"})
 
-if __name__ == "__main__":
+@app.route("/retrain_llm", methods=['POST'])
+def retrain_llm_endpoint():
+    updated_blobs = get_updated_blobs(AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, [HR_POLICIES_BLOB])
+    if updated_blobs:
+        train_llm(AZURE_OPENAI_ENDPOINT, AZURE_OPENAI_API_KEY, AZURE_STORAGE_CONNECTION_STRING, BLOB_CONTAINER_NAME, updated_blobs)
+    return jsonify({"status": "LLM retrained"})
+
+if __name__ == '__main__':
     app.run(debug=True)
