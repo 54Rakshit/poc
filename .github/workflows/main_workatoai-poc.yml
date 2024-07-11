@@ -3,7 +3,7 @@ name: Build and deploy Python project to Azure Function App - workatoai-poc
 on:
   push:
     branches:
-      - main
+      - github-branch
   workflow_dispatch:
 
 env:

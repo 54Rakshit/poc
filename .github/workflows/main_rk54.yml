@@ -3,7 +3,7 @@ name: Deploy Python project to Azure Function App
 on:
   push:
     branches:
-      - main  # Trigger deployment on main branch push
+      - github-branch  # Trigger deployment on main branch push
 
 env:
   AZURE_FUNCTIONAPP_NAME: 'workatoai-poc'   # Set your Azure Function App name
