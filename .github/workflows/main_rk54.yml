@@ -6,7 +6,7 @@ on:
       - main  # Trigger deployment on main branch push
 
 env:
-  AZURE_FUNCTIONAPP_NAME: 'rk54'   # Set your Azure Function App name
+  AZURE_FUNCTIONAPP_NAME: 'workatoai-poc'   # Set your Azure Function App name
   AZURE_FUNCTIONAPP_PACKAGE_PATH: '.'       # Set the path to your function app project, defaults to the repository root
   PYTHON_VERSION: '3.9'                     # Set the Python version to use (e.g., '3.6', '3.7', '3.8')
 
