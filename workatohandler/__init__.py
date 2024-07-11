@@ -1,6 +1,6 @@
 import logging
 import azure.functions as func
-from FlaskApp import app
+from funcapp import app
 
 def main(req: func.HttpRequest, context: func.Context) -> func.HttpResponse:
     logging.info('Received HTTP request, processing with Flask application.')
